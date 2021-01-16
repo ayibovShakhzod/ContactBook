@@ -1,4 +1,4 @@
-package ru.kvando.demo;
+package ru.kvando;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

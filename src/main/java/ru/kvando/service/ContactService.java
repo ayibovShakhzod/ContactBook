@@ -20,4 +20,6 @@ public interface ContactService {
     ApiResponse deleteContact(UUID id);
 
     List<ResContact> getContactSearch(String nameOrNumber);
+
+    ApiResponse updateContact(UUID id, ReqContact reqContact);
 }

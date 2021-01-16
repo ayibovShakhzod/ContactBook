@@ -10,4 +10,6 @@ import java.util.UUID;
 
 public interface NumberRepository extends JpaRepository<Numbers, UUID> {
     List<Numbers> findAllByContactId(UUID contact_id);
+
+    boolean existsByNumberEquals(String number);
 }

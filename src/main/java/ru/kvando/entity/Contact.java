@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 public class Contact extends AbsEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     private String lastName;

@@ -11,10 +11,10 @@ import ru.kvando.entity.Numbers;
 import ru.kvando.payload.*;
 import ru.kvando.repository.ContactRepository;
 import ru.kvando.repository.NumberRepository;
-import ru.kvando.utils.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,27 +31,25 @@ public class ContactServiceImpl implements ContactService {
     public ApiResponse addContact(ReqContact request) {
         try {
             Contact contact = request.getId() == null ? new Contact() : contactRepository.findById(request.getId()).orElseThrow(() -> new ResourceNotFoundException("getContact"));
-            contact.setName(request.getName());
-            contact.setLastName(request.getLastName());
-            contact.setEmail(request.getEmail());
-            contact.setAddress(request.getAddress());
+            if (request.getId() == null && contactRepository.existsByNameEquals(request.getName())) {
+                return new ApiResponse("This " + request.getName() + " name already has!", false);
+            }
+            for (ReqNumbers reqNumbers : request.getPhoneNumber()) {
+                if (request.getId() == null && numberRepository.existsByNumberEquals(reqNumbers.getNumber())) {
+                    return new ApiResponse("This " + reqNumbers.getNumber() + " number already has!", false);
+                }
+            }
+
             if (request.getId() != null) {
                 List<Numbers> numbers = numberRepository.findAllByContactId(request.getId());
                 for (Numbers num : numbers) {
                     numberRepository.deleteById(num.getId());
                 }
             }
-            Contact savedContact = contactRepository.save(contact);
-            List<Numbers> numbersList = new ArrayList<>();
-            for (ReqNumbers reqNumbers : request.getPhoneNumber()) {
-                Numbers numbers = new Numbers();
-                numbers.setContact(savedContact);
-                numbers.setTitle(reqNumbers.getTitle());
-                numbers.setNumber(reqNumbers.getNumber());
-                numbersList.add(numbers);
-            }
 
-            numberRepository.saveAll(numbersList);
+            Contact savedContact = saveContact(contact, request);
+
+            saveNumber(savedContact, request);
 
             return new ApiResponse(request.getId() == null ? "Contact Saved!" : "Contact Edited!", true);
         } catch (Exception e) {
@@ -105,5 +103,47 @@ public class ContactServiceImpl implements ContactService {
     public List<ResContact> getContactSearch(String nameOrNumber) {
         List<Contact> contacts = contactRepository.getContactSearch(nameOrNumber);
         return contacts.stream().map(this::getContact).collect(Collectors.toList());
+    }
+
+    @Override
+    public ApiResponse updateContact(UUID id, ReqContact request) {
+        try {
+            Contact contact = contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("getContact"));
+
+            List<Numbers> numbersLists = numberRepository.findAllByContactId(id);
+            for (Numbers num : numbersLists) {
+                numberRepository.deleteById(num.getId());
+            }
+            contact.setPhoneNumber(null);
+
+            Contact savedContact = saveContact(contact, request);
+
+            saveNumber(savedContact, request);
+
+            return new ApiResponse("Contact Edited!", true);
+        } catch (Exception e) {
+            return new ApiResponse("ERROR: " + e.getMessage(), false);
+        }
+    }
+
+    private Contact saveContact(Contact contact, ReqContact request) {
+        contact.setName(request.getName());
+        contact.setLastName(request.getLastName());
+        contact.setEmail(request.getEmail());
+        contact.setAddress(request.getAddress());
+        return contactRepository.save(contact);
+    }
+
+
+    private void saveNumber(Contact savedContact, ReqContact request) {
+        List<Numbers> numbersList = new ArrayList<>();
+        for (ReqNumbers reqNumbers : request.getPhoneNumber()) {
+            Numbers numbers = new Numbers();
+            numbers.setContact(savedContact);
+            numbers.setTitle(reqNumbers.getTitle());
+            numbers.setNumber(reqNumbers.getNumber());
+            numbersList.add(numbers);
+        }
+        numberRepository.saveAll(numbersList);
     }
 }
