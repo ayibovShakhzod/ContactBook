@@ -2,7 +2,9 @@ package ru.kvando.payload;
 
 import lombok.Data;
 
-import java.util.UUID;
+/**
+ * @author Shakhzod Ayibjonov
+ */
 
 @Data
 public class ReqNumbers {

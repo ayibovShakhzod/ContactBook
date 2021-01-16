@@ -8,6 +8,11 @@ import ru.kvando.entity.Contact;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * @author Shakhzod Ayibjonov
+ */
+
 public interface ContactRepository extends JpaRepository<Contact, UUID> {
     boolean existsByNameEquals(String name);
     @Query(value = "SELECT * FROM contact WHERE LOWER(name) like LOWER(CONCAT('%', :name, '%')) or LOWER(last_name) like LOWER(CONCAT('%', :name, '%')) or id IN (SELECT contact_id FROM numbers where number like CONCAT('%', :name, '%'))", nativeQuery = true)

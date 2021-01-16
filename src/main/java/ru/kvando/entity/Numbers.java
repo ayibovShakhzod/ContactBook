@@ -8,6 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
+
+/**
+ * @author Shakhzod Ayibjonov
+ * Number table extend {@link AbsEntity}
+ */
+
+
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter

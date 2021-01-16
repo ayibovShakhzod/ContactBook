@@ -1,11 +1,13 @@
 package ru.kvando.payload;
 
 import lombok.Data;
-import ru.kvando.entity.Numbers;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+/**
+ * @author Shakhzod Ayibjonov
+ */
 
 @Data
 public class ReqContact {

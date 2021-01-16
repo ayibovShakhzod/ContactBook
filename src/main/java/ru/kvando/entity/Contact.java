@@ -11,6 +11,12 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
 
+/**
+ * @author Shakhzod Ayibjonov
+ * Contact table extend {@link AbsEntity}
+ */
+
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor

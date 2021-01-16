@@ -13,6 +13,12 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+
+/**
+ * @author Shakhzod Ayibjonov
+ * Template table
+ */
+
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
